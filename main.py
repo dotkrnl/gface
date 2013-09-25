@@ -50,14 +50,14 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_RIGHT_DOWN, self.onCancel)
     
     def displayImage(self, img, text=None):
-        if not text: text = '当前：' + self.saver.name()
+        if not text: text = '请确认：' + self.saver.name()
         bitmap = wx.BitmapFromBuffer(img.width, img.height, img.tostring())
         offseth = (self.GetSize()[1] - img.height) / 2
         offsetw = (self.GetSize()[0] - img.width) / 2
         dc = wx.ClientDC(self)
         time.sleep(0.05) # avoid blue display
         dc.DrawBitmap(bitmap, offsetw, offseth, False)
-        dc.SetFont(wx.Font(48, wx.SWISS, wx.NORMAL, wx.BOLD))
+        dc.SetFont(wx.Font(36, wx.SWISS, wx.NORMAL, wx.BOLD))
         dc.DrawText(text, 40, self.GetSize()[1]-100)
     
     def onCamera(self):

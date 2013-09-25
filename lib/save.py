@@ -24,16 +24,20 @@ import settings
 class PhotoSave():
     def __init__(self, csvfile, basepath):
         self.base = basepath
-        with open(csvfile, 'rb') as csvf:
-            dialect = csv.Sniffer().sniff(csvf.read(1024), delimiters=';,')
-            csvf.seek(0); reader = csv.reader(csvf, dialect)
-            self.students = [line for line in reader
-                    if not os.path.isfile(
-                        os.path.join(self.base,
-                        line[1] + settings.USE['fmt']))]
-            self.students.reverse()
+        self.students = []
         self.skips = []
-    
+        try:
+            with open(csvfile, 'rb') as csvf:
+                dialect = csv.Sniffer().sniff(
+                        csvf.read(1024), delimiters=';,')
+                csvf.seek(0); reader = csv.reader(csvf, dialect)
+                self.students = [line for line in reader
+                        if not os.path.isfile(
+                            os.path.join(self.base,
+                            line[1] + settings.USE['fmt']))]
+                self.students.reverse()
+        except: pass
+
     def name(self):
         if len(self.students) == 0: return '完成'
         return self.students[len(self.students) - 1][0]
