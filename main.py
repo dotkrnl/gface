@@ -50,7 +50,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_RIGHT_DOWN, self.onCancel)
     
     def displayImage(self, img, text=None):
-        if not text: text = '请确认：' + self.saver.name()
+        if not text: text = u'请确认：' + self.saver.name()
         bitmap = wx.BitmapFromBuffer(img.width, img.height, img.tostring())
         offseth = (self.GetSize()[1] - img.height) / 2
         offsetw = (self.GetSize()[0] - img.width) / 2
