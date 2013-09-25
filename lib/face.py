@@ -55,7 +55,7 @@ def detectExec(img, tempname = None):
     if tempname == None:
         tempname = tempfile.mktemp(".jpg")
     try:
-        cv.SaveImage(os.path.join(libdir, tempname), img)
+        cv.SaveImage(tempname, img)
         if sys.platform.startswith('win32'): useshell = True
         else: useshell = False
         result = subprocess.check_output(

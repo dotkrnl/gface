@@ -16,19 +16,34 @@
 # limitations under the License.
 
 import cv2.cv as cv
+import cv2, numpy
 import threading
+import settings
+
+def rotateImage(image):
+    shape = (image.width, image.height)
+    image_center = (image.width / 2, image.width / 2)
+    rot_mat = cv2.getRotationMatrix2D(image_center, 90, 1.)
+
+    newimage = numpy.zeros((image.width, image.height, 3), numpy.uint8)
+    newshape = (image.height, image.width);
+    image = numpy.asarray(image[:,:])
+    cv2.warpAffine(image, rot_mat, newshape,
+            newimage, flags=cv2.INTER_LINEAR)
+    
+    bitmap = cv.CreateImageHeader(newshape, cv.IPL_DEPTH_8U, 3)
+    cv.SetData(bitmap, newimage.tostring())
+    return bitmap
 
 class Camera:
     def __init__(self, which = 0):
         self.cap = cv.CaptureFromCAM(which)
         self.lock = threading.Lock()
-    
+
     def getImage(self):
         self.lock.acquire()
         cv.GrabFrame(self.cap)
         img = cv.RetrieveFrame(self.cap)
+        if img and settings.ROT: img = rotateImage(img)
         self.lock.release()
         return img
-
-
-    

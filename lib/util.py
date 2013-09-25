@@ -15,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import numpy
 import cv2.cv as cv
 import defaults
 import face as faceUtil
@@ -80,3 +81,10 @@ def stepCrop(old, new, cur):
             step(old[1], new[1], cur),
             step(old[2], new[2], cur),
             step(old[3], new[3], cur))
+
+def copyImg(img):
+    newimg = cv.CreateImageHeader(
+        (img.width, img.height), cv.IPL_DEPTH_8U, 3)
+    cv.SetData(newimg, numpy.zeros(
+        (img.height, img.width, 3), numpy.uint8).tostring())
+    return newimg

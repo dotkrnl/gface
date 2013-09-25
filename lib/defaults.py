@@ -30,7 +30,8 @@ NATIONAL_STUDENT = {
     "width": 260,
     "height": 320,
     "background":
-        (199, 233, 245, 0)
+        (199, 233, 245, 0),
+    "fmt": ".jpg"
 }
 
 ONE_INCH = {
@@ -39,8 +40,9 @@ ONE_INCH = {
     "mul": 1.6,
     "width": 324,
     "height": 417,
-    "background":
-        (255, 0, 0, 0)
+    #"background":
+    #    (255, 0, 0, 0),
+    "fmt": ".jpg"
 }
 
 THREE_R = {
@@ -50,5 +52,6 @@ THREE_R = {
     "width": 750,
     "height": 525,
     "background":
-        (255, 0, 0, 0)
+        (255, 0, 0, 0),
+    "fmt": ".jpg"
 }

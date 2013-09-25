@@ -31,6 +31,8 @@ import lib.camera as cam
 import lib.face as face
 import lib.process as process
 import lib.defaults as defaults
+import lib.settings as settings
+import lib.save as psave
 
 class MainFrame(wx.Frame):
     def __init__(self):
@@ -42,16 +44,21 @@ class MainFrame(wx.Frame):
         self.oldCrop = self.oldSize = None
         self.curStatus = "camera"
         self.curOrigin = self.curDisplay = None
+        self.saver = psave.PhotoSave(settings.FILE, settings.PHOTO)
         self.Bind(wx.EVT_IDLE, self.onIdle)
-        self.Bind(wx.EVT_LEFT_DOWN, self.onClick)
+        self.Bind(wx.EVT_LEFT_DOWN, self.onConfirm)
+        self.Bind(wx.EVT_RIGHT_DOWN, self.onCancel)
     
-    def displayImage(self, img):
+    def displayImage(self, img, text=None):
+        if not text: text = '当前：' + self.saver.name()
         bitmap = wx.BitmapFromBuffer(img.width, img.height, img.tostring())
         offseth = (self.GetSize()[1] - img.height) / 2
         offsetw = (self.GetSize()[0] - img.width) / 2
         dc = wx.ClientDC(self)
         time.sleep(0.05) # avoid blue display
         dc.DrawBitmap(bitmap, offsetw, offseth, False)
+        dc.SetFont(wx.Font(48, wx.SWISS, wx.NORMAL, wx.BOLD))
+        dc.DrawText(text, 40, self.GetSize()[1]-100)
     
     def onCamera(self):
         img = self.cam.getImage()
@@ -82,14 +89,14 @@ class MainFrame(wx.Frame):
                 cv.AddS(self.curDisplay, (100, 100, 100), self.curDisplay)
                 self.displayImage(self.curDisplay)
             try:
-                self.curDisplay = process.getPhoto(self.curOrigin, defaults.ONE_INCH)
+                self.curDisplay = process.getPhoto(self.curOrigin, settings.USE)
                 self.displayImage(self.curDisplay)
             except Exception as e:
-                self.onClick(None)
+                self.curStatus = 'camera'
                 print e
             self.doneShot = True
         else:
-            self.onClick(None)
+            self.curStatus = 'camera'
 
     def onIdle(self, event):
         if self.curStatus == 'camera':
@@ -98,10 +105,17 @@ class MainFrame(wx.Frame):
             self.onShot()
         event.RequestMore()
 
-    def onClick(self, event):
+    def onConfirm(self, event):
         if self.curStatus == 'camera':
             self.doneShot = False
             self.curStatus = 'shot'
+        else:
+            self.saver.save(self.curDisplay)
+            self.curStatus = 'camera'
+
+    def onCancel(self, event):
+        if self.curStatus == 'camera':
+            self.saver.skip()
         else:
             self.curStatus = 'camera'
 
