@@ -32,7 +32,6 @@ import lib.face as face
 import lib.process as process
 import lib.defaults as defaults
 import lib.settings as settings
-import lib.save as psave
 
 class MainFrame(wx.Frame):
     def __init__(self):
@@ -44,13 +43,13 @@ class MainFrame(wx.Frame):
         self.oldCrop = self.oldSize = None
         self.curStatus = "camera"
         self.curOrigin = self.curDisplay = None
-        self.saver = psave.PhotoSave(settings.FILE, settings.PHOTO)
+        self.saver = settings.SAVE(settings.FILE, settings.PHOTO, settings.USE['fmt'])
         self.Bind(wx.EVT_IDLE, self.onIdle)
         self.Bind(wx.EVT_LEFT_DOWN, self.onConfirm)
         self.Bind(wx.EVT_RIGHT_DOWN, self.onCancel)
     
     def displayImage(self, img, text=None):
-        if not text: text = u'请确认：' + self.saver.name()
+        if not text: text = self.saver.name()
         bitmap = wx.BitmapFromBuffer(img.width, img.height, img.tostring())
         offseth = (self.GetSize()[1] - img.height) / 2
         offsetw = (self.GetSize()[0] - img.width) / 2

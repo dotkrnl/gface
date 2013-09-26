@@ -15,17 +15,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
+import os, sys
 import csv
 import cv2.cv as cv
 import numpy
-import settings
 
 class PhotoSave():
-    def __init__(self, csvfile, basepath):
+    def __init__(self, csvfile, basepath, fmt):
         self.base = basepath
         self.students = []
         self.skips = []
+        self.fmt = fmt
         try:
             with open(csvfile, 'rb') as csvf:
                 dialect = csv.Sniffer().sniff(
@@ -34,9 +34,9 @@ class PhotoSave():
                 self.students = [line for line in reader
                         if not os.path.isfile(
                             os.path.join(self.base,
-                            line[1] + settings.USE['fmt']))]
+                            line[1] + self.fmt))]
                 self.students.reverse()
-        except: pass
+        except int: print "err"
 
     def name(self):
         if len(self.students) == 0: return '完成'
@@ -62,4 +62,4 @@ class PhotoSave():
             (img.height, img.width, 3), numpy.uint8).tostring())
         cv.CvtColor(img, newimg, cv.CV_BGR2RGB)
         cv.SaveImage(os.path.join(
-            self.base, current[1] + settings.USE['fmt']), newimg)
+            self.base, current[1] + self.fmt), newimg)
