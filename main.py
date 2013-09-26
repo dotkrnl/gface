@@ -22,6 +22,7 @@ __copyright__ = "Copyright (C) 2013 Quanzhou No.1 Middle School"
 __license__ = "Apache License"
 __version__ = "1.0"
 
+import sys
 import wx
 import time
 import threading
@@ -43,19 +44,25 @@ class MainFrame(wx.Frame):
         self.oldCrop = self.oldSize = None
         self.curStatus = "camera"
         self.curOrigin = self.curDisplay = None
-        self.saver = settings.SAVE(settings.FILE, settings.PHOTO, settings.USE['fmt'])
+        self.idle = True
+        self.saver = settings.SAVE(
+                settings.FILE, settings.PHOTO,
+                settings.USE['fmt'], settings.RAW)
         self.Bind(wx.EVT_IDLE, self.onIdle)
         self.Bind(wx.EVT_LEFT_DOWN, self.onConfirm)
         self.Bind(wx.EVT_RIGHT_DOWN, self.onCancel)
     
     def displayImage(self, img, text=None):
-        if not text: text = self.saver.name()
         bitmap = wx.BitmapFromBuffer(img.width, img.height, img.tostring())
         offseth = (self.GetSize()[1] - img.height) / 2
         offsetw = (self.GetSize()[0] - img.width) / 2
         dc = wx.ClientDC(self)
         time.sleep(0.05) # avoid blue display
         dc.DrawBitmap(bitmap, offsetw, offseth, False)
+        if not text:
+            self.idle = False
+            text = self.saver.name()
+            self.idle = True
         dc.SetFont(wx.Font(36, wx.SWISS, wx.NORMAL, wx.BOLD))
         dc.DrawText(text, 40, self.GetSize()[1]-100)
     
@@ -84,6 +91,8 @@ class MainFrame(wx.Frame):
             if self.doneShot:
                 self.displayImage(self.curDisplay)
                 return
+            self.raw = util.newImg(self.curDisplay)
+            cv.CvtColor(self.curDisplay, self.raw, cv.CV_BGR2RGB)
             for times in xrange(0, 3):
                 cv.AddS(self.curDisplay, (100, 100, 100), self.curDisplay)
                 self.displayImage(self.curDisplay)
@@ -98,10 +107,11 @@ class MainFrame(wx.Frame):
             self.curStatus = 'camera'
 
     def onIdle(self, event):
-        if self.curStatus == 'camera':
-            self.onCamera()
-        if self.curStatus == 'shot':
-            self.onShot()
+        if self.idle:
+            if self.curStatus == 'camera':
+                self.onCamera()
+            if self.curStatus == 'shot':
+                self.onShot()
         event.RequestMore()
 
     def onConfirm(self, event):
@@ -109,7 +119,7 @@ class MainFrame(wx.Frame):
             self.doneShot = False
             self.curStatus = 'shot'
         else:
-            self.saver.save(self.curDisplay)
+            self.saver.save(self.curDisplay, self.raw)
             self.curStatus = 'camera'
 
     def onCancel(self, event):
@@ -119,6 +129,8 @@ class MainFrame(wx.Frame):
             self.curStatus = 'camera'
 
 if __name__=="__main__":
+    if len(sys.argv) > 1:
+        settings.FILE = sys.argv[1]
     app = wx.App()
     frame = MainFrame()
     frame.Show(True)

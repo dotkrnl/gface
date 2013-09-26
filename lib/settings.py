@@ -21,7 +21,7 @@ import os
 import defaults
 import save.saveStudent
 
-USE = defaults.ONE_INCH
+USE = defaults.NATIONAL_STUDENT
 SAVE = save.saveStudent.PhotoSave 
 ROT = False#True
 RAW = os.path.join(

@@ -19,10 +19,25 @@ import os, sys
 import csv
 import cv2.cv as cv
 import numpy
+import wx
+import random
 
 class PhotoSave():
-    def __init__(self, csvfile, basepath, fmt):
+    def queryName(self):
+        dlg = wx.TextEntryDialog(None, u"请输入您的学号", u"信息采集", '')
+        if dlg.ShowModal() == wx.ID_OK:
+            message = dlg.GetValue()
+            if os.path.isfile(os.path.join(self.base, message + self.fmt)):
+                message += '.' + str(random.randint(0,10000));
+            dlg.Destroy()
+            return (message, message)
+        else:
+            dlg.Destroy()
+            sys.exit(0)
+            
+    def __init__(self, csvfile, basepath, fmt, baseraw=''):
         self.base = basepath
+        self.baseraw = baseraw
         self.students = []
         self.skips = []
         self.fmt = fmt
@@ -36,10 +51,11 @@ class PhotoSave():
                             os.path.join(self.base,
                             line[1] + self.fmt))]
                 self.students.reverse()
-        except int: print "err"
+        except: pass
 
     def name(self):
-        if len(self.students) == 0: return '完成'
+        if len(self.students) == 0:
+            self.students.append(self.queryName())
         return self.students[len(self.students) - 1][0]
 
     def nextLoop(self):
@@ -52,7 +68,7 @@ class PhotoSave():
         self.skips.append(self.students.pop())
         if len(self.students) == 0: self.nextLoop()
 
-    def save(self, img):
+    def save(self, img, raw=None):
         if len(self.students) == 0: return
         current = self.students.pop()
         if len(self.students) == 0: self.nextLoop()
@@ -63,3 +79,6 @@ class PhotoSave():
         cv.CvtColor(img, newimg, cv.CV_BGR2RGB)
         cv.SaveImage(os.path.join(
             self.base, current[1] + self.fmt), newimg)
+        if raw and self.baseraw: 
+            cv.SaveImage(os.path.join(
+                self.baseraw, current[1] + self.fmt), raw)

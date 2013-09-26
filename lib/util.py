@@ -82,7 +82,7 @@ def stepCrop(old, new, cur):
             step(old[2], new[2], cur),
             step(old[3], new[3], cur))
 
-def copyImg(img):
+def newImg(img):
     newimg = cv.CreateImageHeader(
         (img.width, img.height), cv.IPL_DEPTH_8U, 3)
     cv.SetData(newimg, numpy.zeros(
