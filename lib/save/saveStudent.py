@@ -39,39 +39,67 @@ class PhotoSave():
         self.base = basepath
         self.baseraw = baseraw
         self.students = []
-        self.skips = []
+        self.at = 0
+        self.remain = 0
         self.fmt = fmt
+        self.current = ''
         try:
             with open(csvfile, 'rb') as csvf:
                 dialect = csv.Sniffer().sniff(
                         csvf.read(1024), delimiters=';,')
                 csvf.seek(0); reader = csv.reader(csvf, dialect)
-                self.students = [line for line in reader
-                        if not os.path.isfile(
-                            os.path.join(self.base,
-                            line[1] + self.fmt))]
-                self.students.reverse()
+                self.students = [line for line in reader]
+                for n, f in self.students:
+                    if not os.path.isfile(os.path.join(self.base,
+                        f + self.fmt)):
+                         self.remain += 1
+                if os.path.isfile(os.path.join(self.base,
+                    self.students[0][1] + self.fmt)):
+                    self.nextStudent()
         except: pass
 
-    def name(self):
-        if len(self.students) == 0:
-            self.students.append(self.queryName())
-        return self.students[len(self.students) - 1][0]
+    def nextStudent(self):
+        if self.remain:
+            cur = (self.at + 1) % len(self.students)
+            while cur != self.at:
+                if not os.path.isfile(os.path.join(
+                    self.base, self.students[cur][1] + self.fmt)):
+                    self.at = cur
+                    return 
+                else: cur =  (cur + 1) % len(self.students)
+            self.remain = 0 
 
-    def nextLoop(self):
-        self.skips.reverse()
-        self.students = self.skips
-        self.skips = []
+    def name(self):
+        if self.remain == 0 and self.current == '':
+            self.current = self.queryName()
+        if self.remain:
+            return self.students[self.at][0]
+        else: return self.current[0]
+
+    def querySkip(self):
+        dlg = wx.SingleChoiceDialog(None, "", u"人员选择",
+            [(n + ('(完成)' if os.path.isfile(os.path.join(
+                 self.base, f + self.fmt)) else ''))
+                 for n, f in self.students], wx.CHOICEDLG_STYLE)
+        dlg.SetSelection(self.at)
+        if dlg.ShowModal() == wx.ID_OK:
+            selected = dlg.GetSelection()
+            dlg.Destroy()
+            self.at = selected
+            if self.remain == 0: self.remain = 1 
 
     def skip(self):
-        if len(self.students) == 0: return
-        self.skips.append(self.students.pop())
-        if len(self.students) == 0: self.nextLoop()
+        if self.remain == 0: self.current = ''
+        else: self.querySkip()
 
     def save(self, img, raw=None):
-        if len(self.students) == 0: return
-        current = self.students.pop()
-        if len(self.students) == 0: self.nextLoop()
+        if self.remain == 0:
+            current = self.current
+            self.current = ''
+        else:
+            current = self.students[self.at]
+            self.remain -= 1
+            self.nextStudent()
         newimg = cv.CreateImageHeader(
                 (img.width, img.height), cv.IPL_DEPTH_8U, 3)
         cv.SetData(newimg, numpy.zeros(
