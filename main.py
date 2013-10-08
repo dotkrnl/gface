@@ -97,7 +97,7 @@ class MainFrame(wx.Frame):
                 cv.AddS(self.curDisplay, (100, 100, 100), self.curDisplay)
                 self.displayImage(self.curDisplay)
             try:
-                self.curDisplay = process.getPhoto(self.curOrigin, settings.USE)
+                self.curDisplay = process.getPhoto(self.raw, settings.USE)
                 self.displayImage(self.curDisplay)
             except Exception as e:
                 self.curStatus = 'camera'
