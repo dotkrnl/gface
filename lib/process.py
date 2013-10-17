@@ -19,6 +19,7 @@ import util
 import copy
 import sets
 import math
+import numpy
 import cv2.cv as cv
 
 def averageRBG(array):
@@ -87,4 +88,24 @@ def getPhoto(origin, media):
 #            for j in xrange(img.width-1, -1, -1):
 #                change(img, i, j, img.height, img.width,
 #                       middle, media["background"])"""
+    return img
+
+def getPrint(origin, media):
+    img = cv.CreateImageHeader(
+        (media["width"], media["height"]), cv.IPL_DEPTH_8U, 3)
+    cv.SetData(img, numpy.zeros(
+        (img.height, img.width, 3), numpy.uint8).tostring())
+    cv.Set(img, (255, 255, 255))
+    margin = media["margin"]
+    singleheight = origin.height + 2 * margin
+    singlewidth = origin.width + 2 * margin
+    line = int(img.height / singleheight)
+    col = int(img.width / singlewidth)
+    for l in xrange(0, line):
+        for c in xrange(0, col):
+            cv.SetImageROI(img, 
+                (c * singlewidth + margin, l * singleheight + margin, 
+                origin.width, origin.height))
+            cv.Copy(origin, img)
+            cv.ResetImageROI(img)
     return img

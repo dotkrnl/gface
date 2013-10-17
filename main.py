@@ -47,7 +47,8 @@ class MainFrame(wx.Frame):
         self.idle = True
         self.saver = settings.SAVE(
                 settings.FILE, settings.PHOTO,
-                settings.USE['fmt'], settings.RAW)
+                settings.USE['fmt'], settings.RAW, settings.PRINT,
+                settings.PRINTER)
         self.Bind(wx.EVT_IDLE, self.onIdle)
         self.Bind(wx.EVT_LEFT_DOWN, self.onConfirm)
         self.Bind(wx.EVT_RIGHT_DOWN, self.onCancel)
@@ -63,8 +64,13 @@ class MainFrame(wx.Frame):
             self.idle = False
             text = self.saver.name()
             self.idle = True
-        dc.SetFont(wx.Font(36, wx.SWISS, wx.NORMAL, wx.BOLD))
-        dc.DrawText(text, 40, self.GetSize()[1]-100)
+        if text != '':
+            dc.SetBrush(wx.GREY_BRUSH)
+            dc.SetPen(wx.GREY_PEN)
+            width, height = self.GetSize()
+            dc.DrawRectangle(0, height - 120, width, 120)
+            dc.SetFont(wx.Font(48, wx.SWISS, wx.NORMAL, wx.BOLD))
+            dc.DrawText(text, 30, height - 90)
     
     def onCamera(self):
         img = self.cam.getImage()
@@ -97,11 +103,13 @@ class MainFrame(wx.Frame):
                 cv.AddS(self.curDisplay, (100, 100, 100), self.curDisplay)
                 self.displayImage(self.curDisplay)
             try:
-                self.curDisplay = process.getPhoto(self.raw, settings.USE)
+                self.photo = self.curDisplay = process.getPhoto(self.raw, settings.USE)
+                if settings.PRINT and settings.PRINT_USE:
+                    self.printable = process.getPrint(self.photo, settings.PRINT_USE)
                 self.displayImage(self.curDisplay)
-            except Exception as e:
-                self.curStatus = 'camera'
-                print e
+            except int: pass
+            #except Exception as e:
+            #    self.curStatus = 'camera'
             self.doneShot = True
         else:
             self.curStatus = 'camera'
@@ -119,7 +127,7 @@ class MainFrame(wx.Frame):
             self.doneShot = False
             self.curStatus = 'shot'
         else:
-            self.saver.save(self.curDisplay, self.raw)
+            self.saver.save(self.photo, self.raw, self.printable)
             self.curStatus = 'camera'
 
     def onCancel(self, event):

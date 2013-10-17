@@ -21,18 +21,30 @@ import os
 import defaults
 import save.saveStudent
 
-USE = defaults.NATIONAL_STUDENT
-SAVE = save.saveStudent.PhotoSave 
-ROT = False#True
-RAW = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            "../raw"
-        )
+USE = defaults.ONE_INCH
 PHOTO = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             "../photo"
         )
+
+PRINT_USE = defaults.THREE_R
+PRINT = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "../print"
+        )
+
+PRINTER = None
+
+RAW = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "../raw"
+        )
+
+ROT = False#True
+
+SAVE = save.saveStudent.PhotoSave 
 FILE = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             "../students.csv"
         )
+

@@ -35,9 +35,11 @@ class PhotoSave():
             dlg.Destroy()
             sys.exit(0)
             
-    def __init__(self, csvfile, basepath, fmt, baseraw=''):
+    def __init__(self, csvfile, basepath, fmt, baseraw='', baseprint='', printer=''):
         self.base = basepath
         self.baseraw = baseraw
+        self.baseprint = baseprint
+        self.printer = printer
         self.students = []
         self.at = 0
         self.remain = 0
@@ -87,12 +89,13 @@ class PhotoSave():
             dlg.Destroy()
             self.at = selected
             if self.remain == 0: self.remain = 1 
+        dlg.Destroy()
 
     def skip(self):
         if self.remain == 0: self.current = ''
         else: self.querySkip()
 
-    def save(self, img, raw=None):
+    def save(self, img, raw=None, pr=None):
         if self.remain == 0:
             current = self.current
             self.current = ''
@@ -100,13 +103,30 @@ class PhotoSave():
             current = self.students[self.at]
             self.remain -= 1
             self.nextStudent()
+
         newimg = cv.CreateImageHeader(
-                (img.width, img.height), cv.IPL_DEPTH_8U, 3)
+            (img.width, img.height), cv.IPL_DEPTH_8U, 3)
         cv.SetData(newimg, numpy.zeros(
             (img.height, img.width, 3), numpy.uint8).tostring())
         cv.CvtColor(img, newimg, cv.CV_BGR2RGB)
         cv.SaveImage(os.path.join(
             self.base, current[1] + self.fmt), newimg)
+        
         if raw and self.baseraw: 
             cv.SaveImage(os.path.join(
                 self.baseraw, current[1] + self.fmt), raw)
+
+        if pr and self.baseprint:
+            newimg = cv.CreateImageHeader(
+                (pr.width, pr.height), cv.IPL_DEPTH_8U, 3)
+            cv.SetData(newimg, numpy.zeros(
+                (pr.height, pr.width, 3), numpy.uint8).tostring())
+            cv.CvtColor(pr, newimg, cv.CV_BGR2RGB)
+            filename = os.path.join(
+                self.baseprint, current[1] + self.fmt)
+            cv.SaveImage(filename, newimg)
+            if sys.platform.startswith('win32') and self.printer:
+                result = subprocess.check_output(
+                        ["rundll32",
+                         "shimgvw.dll", "ImageView_PrintTo",
+                         "/pt", filename, self.printer], shell = useshell)

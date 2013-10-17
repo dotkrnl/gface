@@ -18,9 +18,9 @@
 # Define inbuilt media type
 
 SCREEN = {
-    "top": 0.5,
+    "top": 0.3,
     "left": 0.5,
-    "mul": 2.1
+    "mul": 2.5
 }
 
 NATIONAL_STUDENT = {
@@ -29,8 +29,8 @@ NATIONAL_STUDENT = {
     "mul": 1.4,
     "width": 260,
     "height": 320,
-    "background":
-        (199, 233, 245, 0),
+#    "background":
+#        (199, 233, 245, 0),
     "fmt": ".jpg"
 }
 
@@ -38,20 +38,15 @@ ONE_INCH = {
     "top": 0.5,
     "left": 0.5,
     "mul": 1.6,
-    "width": 324,
-    "height": 417,
+    "width": 295,
+    "height": 413,
     #"background":
     #    (255, 0, 0, 0),
     "fmt": ".jpg"
 }
 
 THREE_R = {
-    "top": 0.5,
-    "left": 0.5,
-    "mul": 2.5,
-    "width": 750,
-    "height": 525,
-    "background":
-        (255, 0, 0, 0),
-    "fmt": ".jpg"
+    "width": 1500,
+    "height": 1050,
+    "margin": 40
 }
