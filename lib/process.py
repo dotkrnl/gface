@@ -92,15 +92,15 @@ def getPhoto(origin, media):
 
 def getPrint(origin, media):
     img = cv.CreateImageHeader(
-        (media["width"], media["height"]), cv.IPL_DEPTH_8U, 3)
+        (media["printer_w"], media["printer_h"]), cv.IPL_DEPTH_8U, 3)
     cv.SetData(img, numpy.zeros(
         (img.height, img.width, 3), numpy.uint8).tostring())
     cv.Set(img, (255, 255, 255))
     margin = media["margin"]
     singleheight = origin.height + 2 * margin
     singlewidth = origin.width + 2 * margin
-    line = int(img.height / singleheight)
-    col = int(img.width / singlewidth)
+    line = int(media["height"] / singleheight)
+    col = int(media["width"] / singlewidth)
     for l in xrange(0, line):
         for c in xrange(0, col):
             cv.SetImageROI(img, 

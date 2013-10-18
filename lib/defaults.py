@@ -38,8 +38,8 @@ ONE_INCH = {
     "top": 0.5,
     "left": 0.5,
     "mul": 1.6,
-    "width": 295,
-    "height": 413,
+    "width": 318,
+    "height": 449,
     #"background":
     #    (255, 0, 0, 0),
     "fmt": ".jpg"
@@ -48,5 +48,7 @@ ONE_INCH = {
 THREE_R = {
     "width": 1500,
     "height": 1050,
-    "margin": 40
+    "printer_w": 2480,
+    "printer_h": 3508,
+    "margin": 20
 }
