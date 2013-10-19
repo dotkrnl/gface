@@ -49,9 +49,11 @@ class MainFrame(wx.Frame):
                 settings.FILE, settings.PHOTO,
                 settings.USE['fmt'], settings.RAW, settings.PRINT,
                 settings.PRINTER)
+        self.saver.no_exit = settings.NOEXIT
         self.Bind(wx.EVT_IDLE, self.onIdle)
         self.Bind(wx.EVT_LEFT_DOWN, self.onConfirm)
         self.Bind(wx.EVT_RIGHT_DOWN, self.onCancel)
+        self.ShowFullScreen(settings.FULLSCREEN)
     
     def displayImage(self, img, text=None):
         bitmap = wx.BitmapFromBuffer(img.width, img.height, img.tostring())

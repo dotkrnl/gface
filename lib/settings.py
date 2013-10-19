@@ -48,3 +48,5 @@ FILE = os.path.join(
             "../students.csv"
         )
 
+FULLSCREEN = False#True
+NOEXIT = False#True

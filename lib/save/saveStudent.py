@@ -25,15 +25,16 @@ import random
 class PhotoSave():
     def queryName(self):
         dlg = wx.TextEntryDialog(None, u"请输入您的学号", u"信息采集", '')
-        if dlg.ShowModal() == wx.ID_OK:
-            message = dlg.GetValue()
-            if os.path.isfile(os.path.join(self.base, message + self.fmt)):
-                message += '.' + str(random.randint(0,10000));
-            dlg.Destroy()
-            return (message, message)
-        else:
-            dlg.Destroy()
-            sys.exit(0)
+        dlg.ShowModal()
+        if self.no_exit:
+            while str(dlg.GetValue()).strip() == '':
+                dlg.ShowModal()
+        message = dlg.GetValue().strip()
+        if not message: sys.exit(0)
+        if os.path.isfile(os.path.join(self.base, message + self.fmt)):
+            message += '.' + str(random.randint(0,10000));
+        dlg.Destroy()
+        return (message, message)
             
     def __init__(self, csvfile, basepath, fmt, baseraw='', baseprint='', printer=''):
         self.base = basepath
@@ -45,6 +46,7 @@ class PhotoSave():
         self.remain = 0
         self.fmt = fmt
         self.current = ''
+        self.no_exit = False
         try:
             with open(csvfile, 'rb') as csvf:
                 dialect = csv.Sniffer().sniff(
