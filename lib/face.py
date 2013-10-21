@@ -72,7 +72,8 @@ def detectExec(img, tempname = None):
     except subprocess.CalledProcessError:
         return None
     finally:
-        os.unlink(tempname)
+        try: os.unlink(tempname)
+        except: pass
 
 class FaceThread(threading.Thread):
     def __init__(self, camera):

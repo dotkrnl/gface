@@ -22,8 +22,9 @@ import numpy
 import wx
 import random
 
-class PhotoSave():
+class PhotoLogic():
     def queryName(self):
+        if self.reverse: return ('', '')
         dlg = wx.TextEntryDialog(None, u"请输入您的学号", u"信息采集", '')
         dlg.ShowModal()
         if self.no_exit:
@@ -31,12 +32,28 @@ class PhotoSave():
                 dlg.ShowModal()
         message = dlg.GetValue().strip()
         if not message: sys.exit(0)
-        if os.path.isfile(os.path.join(self.base, message + self.fmt)):
+        if os.path.isfile(os.path.join(self.baseraw, message + self.fmt)):
             message += '.' + str(random.randint(0,10000));
         dlg.Destroy()
         return (message, message)
             
-    def __init__(self, csvfile, basepath, fmt, baseraw='', baseprint='', printer=''):
+    def querySkip(self):
+        dlg = wx.SingleChoiceDialog(None, "", u"人员选择",
+            [(n + ('(完成)' if os.path.isfile(os.path.join(
+                 self.baseraw, f + self.fmt)) else ''))
+                 for n, f in self.students], wx.CHOICEDLG_STYLE)
+        dlg.SetSelection(self.at)
+        if dlg.ShowModal() == wx.ID_OK:
+            selected = dlg.GetSelection()
+            dlg.Destroy()
+            self.at = selected
+            if self.remain == 0: self.remain = 1 
+        dlg.Destroy()
+
+    def __init__(self, csvfile='',
+            basepath='', fmt='.jpg',
+            baseraw='', baseprint='',
+            printer='', reverseLogic=False):
         self.base = basepath
         self.baseraw = baseraw
         self.baseprint = baseprint
@@ -47,6 +64,7 @@ class PhotoSave():
         self.fmt = fmt
         self.current = ''
         self.no_exit = False
+        self.reverse = reverseLogic
         try:
             with open(csvfile, 'rb') as csvf:
                 dialect = csv.Sniffer().sniff(
@@ -54,11 +72,11 @@ class PhotoSave():
                 csvf.seek(0); reader = csv.reader(csvf, dialect)
                 self.students = [line for line in reader]
                 for n, f in self.students:
-                    if not os.path.isfile(os.path.join(self.base,
-                        f + self.fmt)):
+                    if os.path.isfile(os.path.join(self.baseraw,
+                        f + self.fmt)) == self.reverse:
                          self.remain += 1
-                if os.path.isfile(os.path.join(self.base,
-                    self.students[0][1] + self.fmt)):
+                if os.path.isfile(os.path.join(self.baseraw,
+                    self.students[0][1] + self.fmt)) != self.reverse:
                     self.nextStudent()
         except: pass
 
@@ -66,11 +84,15 @@ class PhotoSave():
         if self.remain:
             cur = (self.at + 1) % len(self.students)
             while cur != self.at:
-                if not os.path.isfile(os.path.join(
-                    self.base, self.students[cur][1] + self.fmt)):
+                if os.path.isfile(os.path.join(self.baseraw,
+                    self.students[cur][1] + self.fmt)) == self.reverse:
                     self.at = cur
                     return 
-                else: cur =  (cur + 1) % len(self.students)
+                else:
+                    cur =  (cur + 1) % len(self.students)
+                    if cur == 0 and self.reverse:
+                        self.remain = 0
+                        return
             self.remain = 0 
 
     def name(self):
@@ -80,24 +102,18 @@ class PhotoSave():
             return self.students[self.at][0]
         else: return self.current[0]
 
-    def querySkip(self):
-        dlg = wx.SingleChoiceDialog(None, "", u"人员选择",
-            [(n + ('(完成)' if os.path.isfile(os.path.join(
-                 self.base, f + self.fmt)) else ''))
-                 for n, f in self.students], wx.CHOICEDLG_STYLE)
-        dlg.SetSelection(self.at)
-        if dlg.ShowModal() == wx.ID_OK:
-            selected = dlg.GetSelection()
-            dlg.Destroy()
-            self.at = selected
-            if self.remain == 0: self.remain = 1 
-        dlg.Destroy()
+    def filename(self):
+        if self.remain == 0 and self.current == '':
+            self.current = self.queryName()
+        if self.remain:
+            return self.students[self.at][1]
+        else: return self.current[1]
 
     def skip(self):
         if self.remain == 0: self.current = ''
         else: self.querySkip()
 
-    def save(self, img, raw=None, pr=None):
+    def save(self, img=None, raw=None, pr=None):
         if self.remain == 0:
             current = self.current
             self.current = ''
@@ -106,13 +122,14 @@ class PhotoSave():
             self.remain -= 1
             self.nextStudent()
 
-        newimg = cv.CreateImageHeader(
-            (img.width, img.height), cv.IPL_DEPTH_8U, 3)
-        cv.SetData(newimg, numpy.zeros(
-            (img.height, img.width, 3), numpy.uint8).tostring())
-        cv.CvtColor(img, newimg, cv.CV_BGR2RGB)
-        cv.SaveImage(os.path.join(
-            self.base, current[1] + self.fmt), newimg)
+        if img and self.base:
+            newimg = cv.CreateImageHeader(
+                (img.width, img.height), cv.IPL_DEPTH_8U, 3)
+            cv.SetData(newimg, numpy.zeros(
+                (img.height, img.width, 3), numpy.uint8).tostring())
+            cv.CvtColor(img, newimg, cv.CV_BGR2RGB)
+            cv.SaveImage(os.path.join(
+                self.base, current[1] + self.fmt), newimg)
         
         if raw and self.baseraw: 
             cv.SaveImage(os.path.join(
@@ -129,6 +146,6 @@ class PhotoSave():
             cv.SaveImage(filename, newimg)
             if sys.platform.startswith('win32') and self.printer:
                 result = subprocess.check_output(
-                        ["rundll32",
+                        ["rundll32.exe",
                          "shimgvw.dll", "ImageView_PrintTo",
-                         "/pt", filename, self.printer], shell = useshell)
+                         "/pt", filename, self.printer])

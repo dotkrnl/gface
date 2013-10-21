@@ -19,21 +19,31 @@
 
 import os
 import defaults
-import save.saveStudent
+import logic.defaultLogic
 
-USE = defaults.ONE_INCH
+FMT = '.jpg'
+USE = defaults.PHOTO_BASE["ONE_INCH"]
+USES = [ defaults.PHOTO_BASE["ONE_INCH"],
+         defaults.PHOTO_BASE["TWO_INCH"],
+         defaults.PHOTO_BASE["SMALL_TWO_INCH"],
+         defaults.PHOTO_BASE["ID_CARD"],
+         defaults.PHOTO_BASE["NATIONAL_STUDENT"]]
 PHOTO = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             "../photo"
         )
 
-PRINT_USE = defaults.THREE_R
+PRINT_USES = [ defaults.PRINT_BASE["THREE_R"],
+               defaults.PRINT_BASE["FOUR_R"],
+               defaults.PRINT_BASE["FIVE_R"],
+               defaults.PRINT_BASE["SIX_R"],
+               defaults.PRINT_BASE["EIGHT_R"] ]
 PRINT = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             "../print"
         )
 
-PRINTER = None
+PRINTER = "printer_name"
 
 RAW = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
@@ -42,7 +52,7 @@ RAW = os.path.join(
 
 ROT = False#True
 
-SAVE = save.saveStudent.PhotoSave 
+SAVE = logic.defaultLogic.PhotoLogic 
 FILE = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             "../students.csv"

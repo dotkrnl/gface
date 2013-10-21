@@ -47,8 +47,7 @@ class MainFrame(wx.Frame):
         self.idle = True
         self.saver = settings.SAVE(
                 settings.FILE, settings.PHOTO,
-                settings.USE['fmt'], settings.RAW, settings.PRINT,
-                settings.PRINTER)
+                settings.FMT, settings.RAW)
         self.saver.no_exit = settings.NOEXIT
         self.Bind(wx.EVT_IDLE, self.onIdle)
         self.Bind(wx.EVT_LEFT_DOWN, self.onConfirm)
@@ -105,13 +104,11 @@ class MainFrame(wx.Frame):
                 cv.AddS(self.curDisplay, (100, 100, 100), self.curDisplay)
                 self.displayImage(self.curDisplay)
             try:
-                self.photo = self.curDisplay = process.getPhoto(self.raw, settings.USE)
-                if settings.PRINT and settings.PRINT_USE:
-                    self.printable = process.getPrint(self.photo, settings.PRINT_USE)
+                self.photo = self.curDisplay = process.getPhoto(
+                        self.raw, settings.USE)
                 self.displayImage(self.curDisplay)
-            except int: pass
-            #except Exception as e:
-            #    self.curStatus = 'camera'
+            except Exception as e:
+                self.curStatus = 'camera'
             self.doneShot = True
         else:
             self.curStatus = 'camera'
@@ -129,7 +126,7 @@ class MainFrame(wx.Frame):
             self.doneShot = False
             self.curStatus = 'shot'
         else:
-            self.saver.save(self.photo, self.raw, self.printable)
+            self.saver.save(self.photo, self.raw)
             self.curStatus = 'camera'
 
     def onCancel(self, event):
