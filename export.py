@@ -77,6 +77,9 @@ try:
         print "人像采集系统[后台管理]"
         if len(sys.argv) > 1:
             settings.FILE = sys.argv[1]
+            once = False
+        else:
+            once = True
         fmt = settings.FMT
         rawd = settings.RAW
         use = chooseUse()
@@ -88,14 +91,24 @@ try:
                 settings.FILE, settings.PHOTO,
                 settings.FMT, settings.RAW,
                 settings.PRINT, printer, True)
-        current = 1
+        if once:
+            print "输入需处理照片的编号: ", 
+            getid = raw_input().strip()
+            saver.current = (getid, getid)
+        current = 0
         tot = saver.remain
         while saver.filename():
-            raw = cv.LoadImage(os.path.join(rawd,
-                saver.filename() + fmt))
+            current += 1
             print "正在导出: [%d/%d] %s: %s" % (
                     current, tot,
                     saver.name(), saver.filename() )
+            try:
+                raw = cv.LoadImage(os.path.join(rawd,
+                    saver.filename() + fmt))
+            except:
+                print "出现错误，文件不存在"
+                saver.nextStudent()
+                continue
             photo = process.getPhoto(raw, use)
             if effect:
                 newphoto = cv.CreateImage((photo.width, photo.height), 8, 1)
@@ -106,6 +119,5 @@ try:
                 saver.save(None, None, printable)
             else:
                 saver.save(photo, None, None)
-            current += 1
 except KeyboardInterrupt:
     print "任务已取消"

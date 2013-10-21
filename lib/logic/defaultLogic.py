@@ -62,7 +62,7 @@ class PhotoLogic():
         self.at = 0
         self.remain = 0
         self.fmt = fmt
-        self.current = ''
+        self.current = ('', '')
         self.no_exit = False
         self.reverse = reverseLogic
         try:
@@ -81,6 +81,7 @@ class PhotoLogic():
         except: pass
 
     def nextStudent(self):
+        self.current = ('', '')
         if self.remain:
             cur = (self.at + 1) % len(self.students)
             while cur != self.at:
@@ -96,27 +97,27 @@ class PhotoLogic():
             self.remain = 0 
 
     def name(self):
-        if self.remain == 0 and self.current == '':
+        if self.remain == 0 and (self.current == '' or self.current == ('', '')):
             self.current = self.queryName()
         if self.remain:
             return self.students[self.at][0]
         else: return self.current[0]
 
     def filename(self):
-        if self.remain == 0 and self.current == '':
+        if self.remain == 0 and (self.current == '' or self.current == ('', '')):
             self.current = self.queryName()
         if self.remain:
             return self.students[self.at][1]
         else: return self.current[1]
 
     def skip(self):
-        if self.remain == 0: self.current = ''
+        if self.remain == 0: self.current = ('', '')
         else: self.querySkip()
 
     def save(self, img=None, raw=None, pr=None):
         if self.remain == 0:
             current = self.current
-            self.current = ''
+            self.current = ('', '')
         else:
             current = self.students[self.at]
             self.remain -= 1
