@@ -5,8 +5,10 @@ A face capturing application for SIS and other purposes based on OpenCV
 
 ### Usage
 
-Simply `./main.py` and click anywhere to capture best face.
+Simply `./grab.py`, enter your id, and click anywhere to capture best face.
 
-*change `lib.settings.USE` to use other photo type*
+`export.py` to get photo with your options.
+
+*change `lib.settings.USE` to select default photo type*
 
 **Jason Lau**
