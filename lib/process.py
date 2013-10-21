@@ -90,7 +90,7 @@ def getPhoto(origin, media):
 #                       middle, media["background"])"""
     return img
 
-def getPrint(origin, media):
+def getPrint(origin, media, text=''):
     img = cv.CreateImageHeader(
         (media["printer_w"], media["printer_h"]), cv.IPL_DEPTH_8U, 3)
     cv.SetData(img, numpy.zeros(
@@ -108,4 +108,6 @@ def getPrint(origin, media):
                 origin.width, origin.height))
             cv.Copy(origin, img)
             cv.ResetImageROI(img)
+    fontface = cv.InitFont(cv.CV_FONT_HERSHEY_COMPLEX_SMALL, 1, 1)
+    cv.PutText(img, text, (10, singleheight + int(margin/2)), fontface, (0, 0, 0))
     return img

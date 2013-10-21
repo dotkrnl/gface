@@ -115,7 +115,7 @@ try:
                 cv.CvtColor(photo, newphoto, cv.CV_BGR2GRAY)
                 cv.CvtColor(newphoto, photo, cv.CV_GRAY2BGR)
             if prMedia and printer:
-                printable = process.getPrint(photo, prMedia)
+                printable = process.getPrint(photo, prMedia, saver.filename())
                 saver.save(None, None, printable)
             else:
                 saver.save(photo, None, None)
