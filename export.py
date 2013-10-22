@@ -29,7 +29,7 @@ import lib.process as process
 import lib.util as util
 
 def choosePrinter():
-    print '是否导出打印文件？(y/N): ',
+    print u'是否导出打印文件？(y/N): ',
     get = raw_input()
     if get and (get[0] == 'Y' or get[0] == 'y'):
         return settings.PRINTER
@@ -38,43 +38,43 @@ def choosePrinter():
 
 def chooseUse():
     for i in xrange(len(settings.USES)):
-        print '*', i, ':', settings.USES[i]["name"]
-    print '输入数字选择导出照片格式 (空白为 0): ',
-    try: get = raw_input(); get=0 if not get else int(get)
+        print '*', i + 1, ':', settings.USES[i]["name"]
+    print u'输入数字选择导出照片格式 (默认为 1): ',
+    try: get = raw_input(); get=1 if not get else int(get)
     except Exception: get = -1
-    while get >= len(settings.USES) or get < 0:
-        print '重新输入数字选择导出照片格式: ',
-        try: get = raw_input(); get=0 if not get else int(get)
+    while get > len(settings.USES) or get <= 0:
+        print u'重新输入数字选择导出照片格式: ',
+        try: get = raw_input(); get=1 if not get else int(get)
         except Exception: get = -1
-    return settings.USES[get]
+    return settings.USES[get-1]
 
 def choosePrintMedia():
     for i in xrange(len(settings.PRINT_USES)):
-        print '*', i, ':', settings.PRINT_USES[i]["name"]
-    print '输入数字选择打印照片介质 (空白为 0): ',
-    try: get = raw_input(); get=0 if not get else int(get)
+        print '*', i + 1, ':', settings.PRINT_USES[i]["name"]
+    print u'输入数字选择打印照片介质 (默认为 1): ',
+    try: get = raw_input(); get=1 if not get else int(get)
     except Exception: get = -1
-    while get >= len(settings.USES) or get < 0:
-        print '重新输入数字选择打印照片介质: ',
-        try: get = raw_input(); get=0 if not get else int(get)
+    while get > len(settings.PRINT_USES) or get <= 0:
+        print u'重新输入数字选择打印照片介质: ',
+        try: get = raw_input(); get=1 if not get else int(get)
         except Exception: get = -1
-    return settings.PRINT_USES[get]
+    return settings.PRINT_USES[get-1]
 
 def chooseEffect():
-    print '*', 0, ':', '普通' 
-    print '*', 1, ':', '黑白'
-    print '输入数字选择导出照片效果 (空白为 0): ',
+    print '*', 0, ':', u'普通' 
+    print '*', 1, ':', u'黑白'
+    print u'输入数字选择导出照片效果 (默认为 0): ',
     try: get = raw_input(); get=0 if not get else int(get)
     except Exception: get = -1
     while get >= 2 or get < 0:
-        print '重新输入数字选择导出照片效果: ',
+        print u'重新输入数字选择导出照片效果: ',
         try: get = raw_input(); get=0 if not get else int(get)
         except Exception: get = -1
     return get == 1
 
 try:
     if __name__ == '__main__': 
-        print "人像采集系统[后台管理]"
+        print u"人像采集系统[后台管理]"
         if len(sys.argv) > 1:
             settings.FILE = sys.argv[1]
             once = False
@@ -92,21 +92,21 @@ try:
                 settings.FMT, settings.RAW,
                 settings.PRINT, printer, True)
         if once:
-            print "输入需处理照片的编号: ", 
+            print u"输入需处理照片的编号: ", 
             getid = raw_input().strip()
             saver.current = (getid, getid)
         current = 0
         tot = saver.remain
         while saver.filename():
             current += 1
-            print "正在导出: [%d/%d] %s: %s" % (
+            print u"正在导出: [%d/%d] %s" % (
                     current, tot,
-                    saver.name(), saver.filename() )
+                    saver.filename() )
             try:
                 raw = cv.LoadImage(os.path.join(rawd,
                     saver.filename() + fmt))
             except:
-                print "出现错误，文件不存在"
+                print u"出现错误，文件不存在"
                 saver.nextStudent()
                 continue
             photo = process.getPhoto(raw, use)
@@ -120,4 +120,4 @@ try:
             else:
                 saver.save(photo, None, None)
 except KeyboardInterrupt:
-    print "任务已取消"
+    print u"任务已取消"

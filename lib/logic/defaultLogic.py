@@ -21,6 +21,7 @@ import cv2.cv as cv
 import numpy
 import wx
 import random
+import subprocess
 
 class PhotoLogic():
     def queryName(self):
@@ -39,7 +40,7 @@ class PhotoLogic():
             
     def querySkip(self):
         dlg = wx.SingleChoiceDialog(None, "", u"人员选择",
-            [(n + ('(完成)' if os.path.isfile(os.path.join(
+            [(n + ('(OK)' if os.path.isfile(os.path.join(
                  self.baseraw, f + self.fmt)) else ''))
                  for n, f in self.students], wx.CHOICEDLG_STYLE)
         dlg.SetSelection(self.at)

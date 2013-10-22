@@ -22,7 +22,7 @@ import defaults
 import logic.defaultLogic
 
 FMT = '.jpg'
-USE = defaults.PHOTO_BASE["ONE_INCH"]
+USE = defaults.PHOTO_BASE["TWO_INCH"]
 USES = [ defaults.PHOTO_BASE["ONE_INCH"],
          defaults.PHOTO_BASE["TWO_INCH"],
          defaults.PHOTO_BASE["SMALL_TWO_INCH"],

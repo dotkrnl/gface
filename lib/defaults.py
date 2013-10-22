@@ -25,7 +25,7 @@ SCREEN = {
 
 PHOTO_BASE = {
     "NATIONAL_STUDENT": {
-        "name": "全国教务系统",
+        "name": u"全国教务系统",
         "top": 0.65,
         "left": 0.5,
         "mul": 1.4,
@@ -35,7 +35,7 @@ PHOTO_BASE = {
         #   (199, 233, 245, 0),
     },
     "ONE_INCH": {
-        "name": "一寸",
+        "name": u"一寸",
         "top": 0.5,
         "left": 0.5,
         "mul": 1.6,
@@ -45,23 +45,23 @@ PHOTO_BASE = {
         #    (255, 0, 0, 0),
     },
     "TWO_INCH": {
-        "name": "两寸",
-        "top": 0.5,
+        "name": u"两寸",
+        "top": 0.4,
         "left": 0.5,
         "mul": 1.6,
-        "width": 413,
+        "width": 461,
         "height": 626,
     },
     "SMALL_TWO_INCH": {
-        "name": "小两寸",
-        "top": 0.5,
+        "name": u"小两寸",
+        "top": 0.4,
         "left": 0.5,
         "mul": 1.6,
         "width": 390,
         "height": 567,
     },
     "ID_CARD": {
-        "name": "身份证照",
+        "name": u"身份证照",
         "top": 0.5,
         "left": 0.5,
         "mul": 1.6,
@@ -72,43 +72,43 @@ PHOTO_BASE = {
 
 PRINT_BASE = {
     "THREE_R": {
-        "name": "三寸",
+        "name": u"3R",
         "height": 1500,
         "width": 1050,
-        "printer_w": 2480,
-        "printer_h": 3508,
+        "printer_w": 1050,
+        "printer_h": 1500,
         "margin": 10
     },
     "FOUR_R": {
-        "name": "四寸",
+        "name": u"4R",
         "height": 1800,
         "width": 1200,
-        "printer_w": 2480,
-        "printer_h": 3508,
+        "printer_w": 1200,
+        "printer_h": 1800,
         "margin": 15
     },
     "FIVE_R": {
-        "name": "五寸",
+        "name": u"5R",
         "height": 2100,
         "width": 1500,
-        "printer_w": 2480,
-        "printer_h": 3508,
+        "printer_w": 1500,
+        "printer_h": 2100,
         "margin": 17
     },
     "SIX_R": {
-        "name": "六寸",
+        "name": u"6R",
         "height": 2400,
         "width": 1800,
-        "printer_w": 2480,
-        "printer_h": 3508,
+        "printer_w": 1800,
+        "printer_h": 2400,
         "margin": 20
     },
     "EIGHT_R": {
-        "name": "八寸",
+        "name": u"8R",
         "height": 3000,
         "width": 2400,
-        "printer_w": 2480,
-        "printer_h": 3508,
+        "printer_w": 2400,
+        "printer_h": 3000,
         "margin": 20
     },
 }
