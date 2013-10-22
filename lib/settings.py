@@ -60,3 +60,8 @@ FILE = os.path.join(
 
 FULLSCREEN = False#True
 NOEXIT = False#True
+
+FONTSIZE = 48
+LINESIZE = 120
+LEFTMAR = 30
+TOPLOC = 90

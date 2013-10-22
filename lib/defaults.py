@@ -18,9 +18,9 @@
 # Define inbuilt media type
 
 SCREEN = {
-    "top": 0.3,
+    "top": 0.5,
     "left": 0.5,
-    "mul": 2.5
+    "mul": 2.1
 }
 
 PHOTO_BASE = {

@@ -54,10 +54,16 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_RIGHT_DOWN, self.onCancel)
         self.ShowFullScreen(settings.FULLSCREEN)
     
+    def GrabSize(self):
+        grabsize = self.GetSize()
+        grabsize[1] = (grabsize[1] - settings.LINESIZE
+                if grabsize[1] > settings.LINESIZE else 1)
+        return grabsize
+
     def displayImage(self, img, text=None):
         bitmap = wx.BitmapFromBuffer(img.width, img.height, img.tostring())
-        offseth = (self.GetSize()[1] - img.height) / 2
-        offsetw = (self.GetSize()[0] - img.width) / 2
+        offseth = (self.GrabSize()[1] - img.height) / 2
+        offsetw = (self.GrabSize()[0] - img.width) / 2
         dc = wx.ClientDC(self)
         time.sleep(0.05) # avoid blue display
         dc.DrawBitmap(bitmap, offsetw, offseth, False)
@@ -69,29 +75,29 @@ class MainFrame(wx.Frame):
             dc.SetBrush(wx.GREY_BRUSH)
             dc.SetPen(wx.GREY_PEN)
             width, height = self.GetSize()
-            dc.DrawRectangle(0, height - 120, width, 120)
-            dc.SetFont(wx.Font(48, wx.SWISS, wx.NORMAL, wx.BOLD))
-            dc.DrawText(text, 30, height - 90)
+            dc.DrawRectangle(0, height - settings.LINESIZE, width, settings.LINESIZE)
+            dc.SetFont(wx.Font(settings.FONTSIZE, wx.SWISS, wx.NORMAL, wx.BOLD))
+            dc.DrawText(text, settings.LEFTMAR, height - settings.TOPLOC)
     
     def onCamera(self):
         img = self.cam.getImage()
         if img:
-            crop = util.getCrop(img, self.GetSize(),
+            crop = util.getCrop(img, self.GrabSize(),
                                 self.det.face or util.fakeFace(img.height, img.width))
-            if (self.GetSize() == self.oldSize and
+            if (self.GrabSize() == self.oldSize and
                     self.oldCrop and self.oldCrop != crop):
                 for step in xrange(0, 3):
                     curCrop = util.stepCrop(self.oldCrop, crop, (step / 3.))
                     dis = util.getFineImage(self.cam.getImage() or img,
-                                            curCrop, self.GetSize())
+                                            curCrop, self.GrabSize())
                     util.normalizeImage(dis)
                     self.displayImage(dis)
             self.curOrigin = self.cam.getImage() or img
-            self.curDisplay = util.getFineImage(self.curOrigin, crop, self.GetSize())
+            self.curDisplay = util.getFineImage(self.curOrigin, crop, self.GrabSize())
             util.normalizeImage(self.curDisplay)
             self.displayImage(self.curDisplay)
             self.oldCrop = crop
-            self.oldSize = self.GetSize()
+            self.oldSize = self.GrabSize()
     
     def onShot(self):
         if self.curDisplay:
