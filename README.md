@@ -1,11 +1,12 @@
-gface
-=====
+# gface
+
+**this project was DEPRECATED, any issue will NOT be solved**
 
 A face capturing application for SIS and other purposes based on OpenCV
 
-### Usage
+## Usage
 
-Simply `./grab.py`, enter your id, and click anywhere to capture best face.
+Simply `./grab.py`, enter your id, and click anywhere to capture face.
 
 `./export.py` to get photo with your options.
 
@@ -13,4 +14,3 @@ Simply `./grab.py`, enter your id, and click anywhere to capture best face.
 
 *change `lib.settings.USE` to select default photo type*
 
-**Jason Lau**
